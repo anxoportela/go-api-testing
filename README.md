@@ -1,6 +1,13 @@
 <!-- omit from toc -->
 # 🧪 **Go API Testing Framework**
 
+[![Español](https://img.shields.io/badge/Language-Spanish-red)](README.es.md) [![English](https://img.shields.io/badge/Language-English-blue)](README.md)
+
+Welcome! Choose your preferred language.
+
+<!-- omit from toc -->
+## 🌟 **Project Description**
+
 This repository contains a **Go-based API testing framework** designed to automate the testing of APIs using predefined test cases stored in CSV files. It supports reading and writing results to CSV, generating HTML reports, and executing test cases using configurable API requests.
 
 <!-- omit from toc -->
