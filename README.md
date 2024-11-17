@@ -10,7 +10,6 @@ This repository contains a **Go-based API testing framework** designed to automa
 - [🗂️ **Project Structure**](#️-project-structure)
 - [🛠️ **Setup and Installation**](#️-setup-and-installation)
 - [🚀 **Usage**](#-usage)
-- [🤝 **Contributing**](#-contributing)
 
 ---
 
@@ -76,7 +75,7 @@ Before running the tests, you need to set up the required environment and depend
 #### **Clone the repository**
 
    ```bash
-   git clone https://github.com/yourusername/go-api-testing.git
+   git clone https://github.com/anxoportela/go-api-testing.git
    cd go-api-testing
    ```
 
@@ -116,7 +115,7 @@ Before running the tests, you need to set up the required environment and depend
 #### **Clone the repository**
 
    ```cmd
-   git clone https://github.com/yourusername/go-api-testing.git
+   git clone https://github.com/anxoportela/go-api-testing.git
    cd go-api-testing
    ```
 
@@ -180,6 +179,34 @@ Before running the tests, you need to set up the required environment and depend
 
 ---
 
-## 🤝 **Contributing**
+<!-- omit from toc -->
+## 📍 **Contributing**
 
-If you'd like to contribute to this project, feel free to fork the repository, create a branch, and submit a pull request. All contributions are welcome! 🎉
+Contributions are welcome! If you want to contribute to this project, please follow these steps:
+
+1. Fork the project.
+2. Create a new branch for your feature or bugfix (`git checkout -b feature/new-feature`).
+3. Make your changes and commit them (`git commit -am 'Add new feature'`).
+4. Push your changes to your fork (`git push origin feature/new-feature`).
+5. Create a pull request.
+
+---
+
+<!-- omit from toc -->
+## 📄 **License**
+
+This project is licensed under the **MIT License**. For more details, see the [LICENSE](LICENSE) file.
+
+---
+
+<!-- omit from toc -->
+## 📧 **Contact**
+
+For any issues, questions, or suggestions, feel free to reach out to the project maintainers:
+
+**Email**: [hello@anxoportela.dev](mailto:hello@anxoportela.dev)
+
+---
+
+<!-- omit from toc -->
+### 🎉 **Enjoy using the API Testing Framework in Python!** 🎉
