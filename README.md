@@ -209,4 +209,4 @@ For any issues, questions, or suggestions, feel free to reach out to the project
 ---
 
 <!-- omit from toc -->
-### 🎉 **Enjoy using the API Testing Framework in Python!** 🎉
+### 🎉 **Enjoy using the Go API Testing Framework!** 🎉
