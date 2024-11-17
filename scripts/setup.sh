@@ -12,7 +12,7 @@
 #   - Crea un archivo CSV con casos de prueba básicos si no existe.
 #   - Elimina los archivos de resultados anteriores (data/results.csv y data/report.html) si existen.
 #   - Crea un archivo .env con las variables de entorno necesarias si no existe.
-#   
+#
 # Uso:
 #   Ejecuta el script desde la terminal con el siguiente comando:
 #   ./setup.sh
