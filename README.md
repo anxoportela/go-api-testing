@@ -100,12 +100,6 @@ Before running the tests, you need to set up the required environment and depend
    ./scripts/setup.sh
    ```
 
-   The `setup.sh` script will:
-
-- Install the necessary Go dependencies.
-- Create a `.env` file with the necessary environment variables.
-- Generate a sample `test_cases.csv` file in the `data/` directory.
-
 #### **Verify Setup**
 
    Once the setup script completes, you should have the following files:
@@ -133,12 +127,6 @@ Before running the tests, you need to set up the required environment and depend
    ```cmd
    scripts\setup.bat
    ```
-
-   The `setup.bat` script will:
-
-- Install the necessary Go dependencies.
-- Create a `.env` file with the necessary environment variables.
-- Generate a sample `test_cases.csv` file in the `data/` directory.
 
 #### **Verify Setup**
 

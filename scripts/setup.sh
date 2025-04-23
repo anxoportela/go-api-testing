@@ -70,7 +70,7 @@ fi
 TEST_CASES_FILE="data/test_cases.csv"
 if [ ! -f "$TEST_CASES_FILE" ]; then
     echo "El archivo '$TEST_CASES_FILE' no existe. Creando archivo con algunos casos de prueba básicos..."
-    
+
     # Crear archivo CSV con ejemplos de pruebas
     cat <<EOL > $TEST_CASES_FILE
 TestId,TestCase,Run,Method,URL,Endpoint,Authorization,User,Password,Headers,Body,ExpectedStatusCode,ExpectedResponse
@@ -111,7 +111,7 @@ fi
 ENV_FILE=".env"
 if [ ! -f "$ENV_FILE" ]; then
     echo "El archivo '$ENV_FILE' no existe. Creando archivo con las variables de entorno..."
-    
+
     # Crear archivo .env con las variables de entorno
     cat <<EOL > $ENV_FILE
 TEST_CASES_FILE=data/test_cases.csv
