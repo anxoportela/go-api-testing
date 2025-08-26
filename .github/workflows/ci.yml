@@ -43,7 +43,7 @@ jobs:
     needs: test
     runs-on: ubuntu-latest
     permissions:
-      contents: write   # necesario para publicar en gh-pages
+      contents: write
 
     steps:
       - name: Checkout code
