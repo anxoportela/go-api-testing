@@ -1,0 +1,229 @@
+
+			<!DOCTYPE html>
+			<html lang="en">
+			<head>
+				<meta charset="UTF-8">
+				<meta name="viewport" content="width=device-width, initial-scale=1.0">
+				<title>Reporte de Resultados de Pruebas</title>
+				<style>
+					/* Estilos del reporte HTML */
+					body {
+						font-family: 'Roboto', Arial, sans-serif;
+						background-color: #f4f4f9;
+						margin: 0;
+						padding: 20px;
+						color: #333;
+					}
+					h2 {
+						text-align: center;
+						color: #444;
+						margin-bottom: 20px;
+					}
+					table {
+						width: 100%;
+						border-collapse: collapse;
+						background: white;
+						margin: 20px auto;
+						box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+						border-radius: 8px;
+						overflow: hidden;
+					}
+					th, td {
+						padding: 12px 15px;
+						text-align: left;
+						border: 1px solid #ddd;
+					}
+					th {
+						background-color: #007bff;
+						color: white;
+						text-transform: uppercase;
+						font-size: 14px;
+					}
+					td {
+						font-size: 14px;
+						color: #555;
+						vertical-align: top;
+					}
+					tr:nth-child(even) {
+						background-color: #f9f9f9;
+					}
+					tr:hover {
+						background-color: #f1f7ff;
+					}
+					.status-pass {
+						color: #28a745;
+						font-weight: bold;
+					}
+					.status-fail {
+						color: #dc3545;
+						font-weight: bold;
+					}
+					.emoji {
+						font-size: 18px;
+						margin-right: 8px;
+					}
+					.message-cell {
+						max-width: 300px; /* Limitar el ancho máximo */
+						overflow: hidden;
+						white-space: nowrap; /* Evitar salto de línea por defecto */
+						text-overflow: ellipsis; /* Mostrar "..." cuando el texto es demasiado largo */
+						word-wrap: break-word;
+					}
+					.message-full {
+						white-space: normal; /* Expandir texto completo */
+					}
+					.expand-btn {
+						color: #007bff;
+						cursor: pointer;
+						text-decoration: underline;
+						font-size: 12px;
+					}
+				</style>
+				<script>
+					function toggleMessage(id) {
+						const cell = document.getElementById(id);
+						const isExpanded = cell.classList.contains('message-full');
+						cell.classList.toggle('message-full', !isExpanded);
+						const btn = document.getElementById('btn-' + id);
+						if (isExpanded) {
+							btn.innerText = 'Ver más';
+						} else {
+							btn.innerText = 'Ver menos';
+						}
+					}
+				</script>
+			</head>
+			<body>
+				<h2>📋 Reporte de Resultados de Pruebas</h2>
+				<table>
+					<tr>
+						<th><span class="emoji">🆔</span>TestId</th>
+						<th><span class="emoji">📝</span>TestCase</th>
+						<th><span class="emoji">✅</span>Resultado</th>
+						<th><span class="emoji">📜</span>Mensaje</th>
+					</tr>
+					 <!-- Iterar sobre los resultados -->
+					<tr>
+						<td>TC-001</td> <!-- Mostrar TestId -->
+						<td>Obtener primer usuario OK</td> <!-- Mostrar TestCase -->
+						<td class="status-pass">
+							Passed
+						</td> <!-- Mostrar Resultado con texto y estilo -->
+						<td>
+							<div id="message-0" class="message-cell">
+								Prueba exitosa
+							</div>
+							
+						</td> <!-- Mostrar Mensaje -->
+					</tr>
+					 <!-- Iterar sobre los resultados -->
+					<tr>
+						<td>TC-002</td> <!-- Mostrar TestId -->
+						<td>Obtener primer usuario KO</td> <!-- Mostrar TestCase -->
+						<td class="status-fail">
+							Failed
+						</td> <!-- Mostrar Resultado con texto y estilo -->
+						<td>
+							<div id="message-1" class="message-cell">
+								Las respuestas no coinciden: Esperada: {} Obtenida: {"address":{"city":"Gwenborough","geo":{"lat":"-37.3159","lng":"81.1496"},"street":"Kulas Light","suite":"Apt. 556","zipcode":"92998-3874"},"company":{"bs":"harness real-time e-markets","catchPhrase":"Multi-layered client-server neural-net","name":"Romaguera-Crona"},"email":"Sincere@april.biz","id":1,"name":"Leanne Graham","phone":"1-770-736-8031 x56442","username":"Bret","website":"hildegard.org"}
+							</div>
+							 <!-- Mostrar botón si el mensaje es largo -->
+							<span class="expand-btn" id="btn-message-1" onclick="toggleMessage('message-1')">Ver más</span>
+							
+						</td> <!-- Mostrar Mensaje -->
+					</tr>
+					 <!-- Iterar sobre los resultados -->
+					<tr>
+						<td>TC-003</td> <!-- Mostrar TestId -->
+						<td>Obtener + StatusCode KO</td> <!-- Mostrar TestCase -->
+						<td class="status-fail">
+							Failed
+						</td> <!-- Mostrar Resultado con texto y estilo -->
+						<td>
+							<div id="message-2" class="message-cell">
+								Código de estado esperado: 404, obtenido: 200
+							</div>
+							 <!-- Mostrar botón si el mensaje es largo -->
+							<span class="expand-btn" id="btn-message-2" onclick="toggleMessage('message-2')">Ver más</span>
+							
+						</td> <!-- Mostrar Mensaje -->
+					</tr>
+					 <!-- Iterar sobre los resultados -->
+					<tr>
+						<td>TC-004</td> <!-- Mostrar TestId -->
+						<td>Invalid endpoint</td> <!-- Mostrar TestCase -->
+						<td class="status-pass">
+							Passed
+						</td> <!-- Mostrar Resultado con texto y estilo -->
+						<td>
+							<div id="message-3" class="message-cell">
+								Prueba exitosa
+							</div>
+							
+						</td> <!-- Mostrar Mensaje -->
+					</tr>
+					 <!-- Iterar sobre los resultados -->
+					<tr>
+						<td>TC-005</td> <!-- Mostrar TestId -->
+						<td>Invalid Status Code</td> <!-- Mostrar TestCase -->
+						<td class="status-fail">
+							Failed
+						</td> <!-- Mostrar Resultado con texto y estilo -->
+						<td>
+							<div id="message-4" class="message-cell">
+								Código de estado esperado: 200, obtenido: 404
+							</div>
+							 <!-- Mostrar botón si el mensaje es largo -->
+							<span class="expand-btn" id="btn-message-4" onclick="toggleMessage('message-4')">Ver más</span>
+							
+						</td> <!-- Mostrar Mensaje -->
+					</tr>
+					 <!-- Iterar sobre los resultados -->
+					<tr>
+						<td>TC-007</td> <!-- Mostrar TestId -->
+						<td>Token Auth</td> <!-- Mostrar TestCase -->
+						<td class="status-pass">
+							Passed
+						</td> <!-- Mostrar Resultado con texto y estilo -->
+						<td>
+							<div id="message-5" class="message-cell">
+								Prueba exitosa
+							</div>
+							
+						</td> <!-- Mostrar Mensaje -->
+					</tr>
+					 <!-- Iterar sobre los resultados -->
+					<tr>
+						<td>TC-008</td> <!-- Mostrar TestId -->
+						<td>Ejemplo de POST</td> <!-- Mostrar TestCase -->
+						<td class="status-pass">
+							Passed
+						</td> <!-- Mostrar Resultado con texto y estilo -->
+						<td>
+							<div id="message-6" class="message-cell">
+								Prueba exitosa
+							</div>
+							
+						</td> <!-- Mostrar Mensaje -->
+					</tr>
+					 <!-- Iterar sobre los resultados -->
+					<tr>
+						<td>TC-009</td> <!-- Mostrar TestId -->
+						<td>Ejemplo de POST Error</td> <!-- Mostrar TestCase -->
+						<td class="status-fail">
+							Failed
+						</td> <!-- Mostrar Resultado con texto y estilo -->
+						<td>
+							<div id="message-7" class="message-cell">
+								Las respuestas no coinciden: Esperada: {} Obtenida: {"id":11}
+							</div>
+							 <!-- Mostrar botón si el mensaje es largo -->
+							<span class="expand-btn" id="btn-message-7" onclick="toggleMessage('message-7')">Ver más</span>
+							
+						</td> <!-- Mostrar Mensaje -->
+					</tr>
+					
+				</table>
+			</body>
+			</html>
+			
