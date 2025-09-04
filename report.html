@@ -1,0 +1,203 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>API Test Dashboard</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+<style>
+body { font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif; background:#f8f9fa; color:#343a40; }
+h1,h2{ text-align:center; margin:20px 0; }
+.card { margin-bottom:15px; }
+.table td, .table th { vertical-align: middle; }
+.status-pass { color:#28a745; font-weight:bold; }
+.status-fail { color:#dc3545; font-weight:bold; }
+.message-cell { max-width:350px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.message-cell.expanded { white-space:normal; }
+.expand-btn { cursor:pointer; color:#0d6efd; text-decoration:underline; font-size:12px; }
+.filter-container { display:flex; justify-content:center; gap:10px; flex-wrap:wrap; margin-bottom:20px; }
+</style>
+</head>
+<body>
+<div class="container">
+<h1>📊 API Test Dashboard</h1>
+
+
+<div class="row text-center">
+  <div class="col-md-3"><div class="card"><div class="card-body"><h5>Total Tests</h5><p class="fs-3">8</p></div></div></div>
+  <div class="col-md-3"><div class="card"><div class="card-body"><h5>Passed</h5><p class="fs-3">3</p></div></div></div>
+  <div class="col-md-3"><div class="card"><div class="card-body"><h5>Failed</h5><p class="fs-3">5</p></div></div></div>
+  <div class="col-md-3"><div class="card"><div class="card-body"><h5>Overall Status</h5><p class="fs-3">❌ Fail</p></div></div></div>
+</div>
+
+
+<div class="filter-container">
+  <select id="filterTestCase" class="form-select w-auto"><option value="">All TestCases</option></select>
+  <select id="filterResult" class="form-select w-auto"><option value="">All Results</option><option value="true">Passed</option><option value="false">Failed</option></select>
+  <button class="btn btn-primary" onclick="exportTableToExcel('resultsTable','API_Test_Report')">Export Excel</button>
+</div>
+
+
+<div class="row">
+  <div class="col-md-6"><h3 class="text-center">Tests per TestCase</h3><canvas id="barChart" height="200"></canvas></div>
+  <div class="col-md-6"><h3 class="text-center">Result Distribution</h3><canvas id="pieChart" height="200"></canvas></div>
+</div>
+
+
+<div class="table-responsive mt-4">
+<table id="resultsTable" class="table table-striped table-bordered table-hover">
+<thead class="table-dark"><tr><th>TestId</th><th>TestCase</th><th>Result</th><th>Message</th></tr></thead>
+<tbody>
+
+<tr>
+<td>TC-001</td>
+<td>Get first user OK</td>
+<td class="status-pass">Passed</td>
+<td><div id="msg-0" class="message-cell">Test passed successfully</div></td>
+</tr>
+
+<tr>
+<td>TC-002</td>
+<td>Get first user KO</td>
+<td class="status-fail">Failed</td>
+<td><div id="msg-1" class="message-cell">Response does not match:
+Expected: {}
+Obtained: {
+  &#34;address&#34;: {
+    &#34;city&#34;: &#34;Gwenborough&#34;,
+    &#34;geo&#34;: {
+      &#34;lat&#34;: &#34;-37.3159&#34;,
+      &#34;lng&#34;: &#34;81.1496&#34;
+    },
+    &#34;street&#34;: &#34;Kulas Light&#34;,
+    &#34;suite&#34;: &#34;Apt. 556&#34;,
+    &#34;zipcode&#34;: &#34;92998-3874&#34;
+  },
+  &#34;company&#34;: {
+    &#34;bs&#34;: &#34;harness real-time e-markets&#34;,
+    &#34;catchPhrase&#34;: &#34;Multi-layered client-server neural-net&#34;,
+    &#34;name&#34;: &#34;Romaguera-Crona&#34;
+  },
+  &#34;email&#34;: &#34;Sincere@april.biz&#34;,
+  &#34;id&#34;: 1,
+  &#34;name&#34;: &#34;Leanne Graham&#34;,
+  &#34;phone&#34;: &#34;1-770-736-8031 x56442&#34;,
+  &#34;username&#34;: &#34;Bret&#34;,
+  &#34;website&#34;: &#34;hildegard.org&#34;
+}</div> <span class="expand-btn" onclick="toggleMessage('msg-1', this)">See More</span></td>
+</tr>
+
+<tr>
+<td>TC-003</td>
+<td>Get &#43; StatusCode KO</td>
+<td class="status-fail">Failed</td>
+<td><div id="msg-2" class="message-cell">Incorrect status code: expected 404, got 200</div></td>
+</tr>
+
+<tr>
+<td>TC-004</td>
+<td>Invalid endpoint</td>
+<td class="status-pass">Passed</td>
+<td><div id="msg-3" class="message-cell">Test passed successfully</div></td>
+</tr>
+
+<tr>
+<td>TC-005</td>
+<td>Invalid Status Code</td>
+<td class="status-fail">Failed</td>
+<td><div id="msg-4" class="message-cell">Incorrect status code: expected 200, got 404</div></td>
+</tr>
+
+<tr>
+<td>TC-007</td>
+<td>Token Auth</td>
+<td class="status-fail">Failed</td>
+<td><div id="msg-5" class="message-cell">Incorrect status code: expected 200, got 401</div></td>
+</tr>
+
+<tr>
+<td>TC-008</td>
+<td>POST Example</td>
+<td class="status-pass">Passed</td>
+<td><div id="msg-6" class="message-cell">Test passed successfully</div></td>
+</tr>
+
+<tr>
+<td>TC-009</td>
+<td>POST Error Example</td>
+<td class="status-fail">Failed</td>
+<td><div id="msg-7" class="message-cell">Response does not match:
+Expected: {}
+Obtained: {
+  &#34;id&#34;: 11
+}</div> <span class="expand-btn" onclick="toggleMessage('msg-7', this)">See More</span></td>
+</tr>
+
+</tbody>
+</table>
+</div>
+</div>
+
+<script>
+function toggleMessage(id, btn){
+  const cell = document.getElementById(id);
+  cell.classList.toggle('expanded');
+  btn.innerText = cell.classList.contains('expanded') ? 'See Less' : 'See More';
+}
+function exportTableToExcel(tableID, filename=''){
+  var table = document.getElementById(tableID);
+  var wb = XLSX.utils.table_to_book(table,{sheet:"Sheet1"});
+  XLSX.writeFile(wb, filename+'.xlsx');
+}
+
+$(document).ready(function(){
+  var table = $('#resultsTable').DataTable({pageLength:10});
+  var testCaseSet = new Set();
+  table.column(1).data().each(function(value){ testCaseSet.add(value); });
+  testCaseSet.forEach(function(tc){ $('#filterTestCase').append('<option value="'+tc+'">'+tc+'</option>'); });
+  $('#filterTestCase,#filterResult').on('change', function(){
+    var tc = $('#filterTestCase').val();
+    var res = $('#filterResult').val();
+    table.rows().every(function(){
+      var show=true;
+      if(tc && this.data()[1]!=tc) show=false;
+      if(res && this.data()[2]!=res) show=false;
+      $(this.node()).toggle(show);
+    });
+  });
+});
+
+
+const historico = [{"message":"Response does not match:\nExpected: {}\nObtained: {\n  \"id\": 11\n}","result":false,"run_date":"2025-09-04T22:00:52.941622039Z","test_case":"POST Error Example","test_id":"TC-009"},{"message":"Test passed successfully","result":true,"run_date":"2025-09-04T22:00:52.761929551Z","test_case":"POST Example","test_id":"TC-008"},{"message":"Incorrect status code: expected 200, got 401","result":false,"run_date":"2025-09-04T22:00:52.582950265Z","test_case":"Token Auth","test_id":"TC-007"},{"message":"Incorrect status code: expected 200, got 404","result":false,"run_date":"2025-09-04T22:00:51.750630054Z","test_case":"Invalid Status Code","test_id":"TC-005"},{"message":"Test passed successfully","result":true,"run_date":"2025-09-04T22:00:51.648914322Z","test_case":"Invalid endpoint","test_id":"TC-004"},{"message":"Incorrect status code: expected 404, got 200","result":false,"run_date":"2025-09-04T22:00:51.308131506Z","test_case":"Get + StatusCode KO","test_id":"TC-003"},{"message":"Response does not match:\nExpected: {}\nObtained: {\n  \"address\": {\n    \"city\": \"Gwenborough\",\n    \"geo\": {\n      \"lat\": \"-37.3159\",\n      \"lng\": \"81.1496\"\n    },\n    \"street\": \"Kulas Light\",\n    \"suite\": \"Apt. 556\",\n    \"zipcode\": \"92998-3874\"\n  },\n  \"company\": {\n    \"bs\": \"harness real-time e-markets\",\n    \"catchPhrase\": \"Multi-layered client-server neural-net\",\n    \"name\": \"Romaguera-Crona\"\n  },\n  \"email\": \"Sincere@april.biz\",\n  \"id\": 1,\n  \"name\": \"Leanne Graham\",\n  \"phone\": \"1-770-736-8031 x56442\",\n  \"username\": \"Bret\",\n  \"website\": \"hildegard.org\"\n}","result":false,"run_date":"2025-09-04T22:00:51.204857884Z","test_case":"Get first user KO","test_id":"TC-002"},{"message":"Test passed successfully","result":true,"run_date":"2025-09-04T22:00:51.102529576Z","test_case":"Get first user OK","test_id":"TC-001"}];
+let grouped={}, totalPassed=0, totalFailed=0;
+historico.forEach(h=>{
+  const tc = h.test_case || h.TestCase;
+  if(!grouped[tc]) grouped[tc]={passed:0, failed:0};
+  if(h.result || h.Result){ grouped[tc].passed++; totalPassed++; }else{ grouped[tc].failed++; totalFailed++; }
+});
+const labels = Object.keys(grouped);
+const passedData = labels.map(l=>grouped[l].passed);
+const failedData = labels.map(l=>grouped[l].failed);
+
+
+new Chart(document.getElementById('barChart').getContext('2d'),{
+  type:'bar',
+  data:{labels:labels,datasets:[{label:'Passed',data:passedData,backgroundColor:'#28a745'},{label:'Failed',data:failedData,backgroundColor:'#dc3545'}]},
+  options:{responsive:true,plugins:{legend:{position:'top'}},scales:{y:{beginAtZero:true,stepSize:1}}}
+});
+
+
+new Chart(document.getElementById('pieChart').getContext('2d'),{
+  type:'pie',
+  data:{labels:['Passed','Failed'],datasets:[{data:[totalPassed,totalFailed],backgroundColor:['#28a745','#dc3545']}]},
+  options:{responsive:true,plugins:{legend:{position:'top'}}}
+});
+</script>
+</body>
+</html>
