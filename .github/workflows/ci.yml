@@ -60,8 +60,4 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./public
-<<<<<<< HEAD
           force_orphan: true
-=======
-          force_orphan: true
->>>>>>> 649afac (big update)
