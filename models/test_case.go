@@ -1,38 +1,38 @@
-// Paquete models define las estructuras utilizadas en las pruebas, como los casos de prueba en formato CSV.
+// Package models defines the structures used in testing, such as test cases in CSV format.
 package models
 
-// TestCase representa un caso de prueba que contiene la información necesaria para ejecutar una prueba de API.
-// La estructura se mapea directamente a un archivo CSV donde cada columna corresponde a un campo de la prueba.
+// TestCase represents a test case containing the necessary information to execute an API test.
+// The structure maps directly to a CSV file where each column corresponds to a test field.
 //
-// La estructura se utiliza para leer los casos de prueba desde un archivo CSV y luego ejecutar las solicitudes HTTP
-// según los datos proporcionados.
+// The structure is used to read test cases from a CSV file and then execute HTTP requests
+// according to the provided data.
 //
-// Campos:
-//   - TestId: El identificador único del caso de prueba. (Por ejemplo, "TC01").
-//   - TestCase: El nombre o descripción del caso de prueba.
-//   - Run: Indica si el caso de prueba debe ejecutarse ("Y" para sí, "N" para no).
-//   - Method: El método HTTP que se debe usar (por ejemplo, "GET", "POST").
-//   - URL: La URL base a la que se le añadirá el endpoint.
-//   - Endpoint: El endpoint específico a anexar a la URL base.
-//   - Authorization: El tipo de autenticación que se utilizará para la solicitud (por ejemplo, "Bearer").
-//   - User: El nombre de usuario para la autenticación, si se requiere.
-//   - Password: La contraseña asociada al nombre de usuario, si se requiere.
-//   - Headers: Las cabeceras HTTP adicionales para la solicitud, en formato JSON.
-//   - Body: El cuerpo de la solicitud, que será enviado en el caso de solicitudes como "POST" o "PUT".
-//   - ExpectedStatusCode: El código de estado HTTP que se espera recibir en la respuesta.
-//   - ExpectedResponse: La respuesta esperada de la API, en formato JSON, que se compara con la respuesta real.
+// Fields:
+//   - TestId: The unique identifier of the test case (e.g., "TC01").
+//   - TestCase: The name or description of the test case.
+//   - Run: Indicates whether the test case should be executed ("Y" for yes, "N" for no).
+//   - Method: The HTTP method to use (e.g., "GET", "POST").
+//   - URL: The base URL to which the endpoint will be appended.
+//   - Endpoint: The specific endpoint to append to the base URL.
+//   - Authorization: The type of authentication used for the request (e.g., "Bearer").
+//   - User: The username for authentication, if required.
+//   - Password: The password associated with the username, if required.
+//   - Headers: Additional HTTP headers for the request, in JSON format.
+//   - Body: The body of the request, sent in cases like "POST" or "PUT".
+//   - ExpectedStatusCode: The expected HTTP status code in the response.
+//   - ExpectedResponse: The expected API response in JSON format, to compare with the actual response.
 type TestCase struct {
-	TestId             string `json:"TestId"`             // Identificador del caso de prueba.
-	TestCase           string `json:"TestCase"`           // Nombre o descripción del caso de prueba.
-	Run                string `json:"Run"`                // Indica si el caso de prueba debe ejecutarse ("Y" o "N").
-	Method             string `json:"Method"`             // Método HTTP (GET, POST, PUT, DELETE).
-	URL                string `json:"URL"`                // URL base para la solicitud.
-	Endpoint           string `json:"Endpoint"`           // Endpoint que se añadirá a la URL base.
-	Authorization      string `json:"Authorization"`      // Tipo de autorización (por ejemplo, "Bearer").
-	User               string `json:"User"`               // Nombre de usuario para la autenticación.
-	Password           string `json:"Password"`           // Contraseña para la autenticación.
-	Headers            string `json:"Headers"`            // Cabeceras HTTP en formato JSON.
-	Body               string `json:"Body"`               // Cuerpo de la solicitud (para POST, PUT).
-	ExpectedStatusCode int    `json:"ExpectedStatusCode"` // Código de estado esperado en la respuesta.
-	ExpectedResponse   string `json:"ExpectedResponse"`   // Respuesta esperada en formato JSON.
+	TestId             string `json:"TestId"`             // Test case identifier.
+	TestCase           string `json:"TestCase"`           // Name or description of the test case.
+	Run                string `json:"Run"`                // Indicates if the test case should run ("Y" or "N").
+	Method             string `json:"Method"`             // HTTP method (GET, POST, PUT, DELETE).
+	URL                string `json:"URL"`                // Base URL for the request.
+	Endpoint           string `json:"Endpoint"`           // Endpoint to append to the base URL.
+	Authorization      string `json:"Authorization"`      // Type of authorization (e.g., "Bearer").
+	User               string `json:"User"`               // Username for authentication.
+	Password           string `json:"Password"`           // Password for authentication.
+	Headers            string `json:"Headers"`            // HTTP headers in JSON format.
+	Body               string `json:"Body"`               // Request body (for POST, PUT).
+	ExpectedStatusCode int    `json:"ExpectedStatusCode"` // Expected HTTP status code in the response.
+	ExpectedResponse   string `json:"ExpectedResponse"`   // Expected response in JSON format.
 }

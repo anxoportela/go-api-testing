@@ -1,5 +1,5 @@
-// Paquete config maneja la carga de la configuración de la aplicación desde
-// variables de entorno, especialmente los archivos de casos de prueba, resultados y reporte.
+// Package config handles loading the application configuration from
+// environment variables, especially the test cases file, results file, and report file.
 package config
 
 import (
@@ -9,54 +9,54 @@ import (
 	"github.com/joho/godotenv"
 )
 
-// Config representa la estructura que contiene las rutas de los archivos utilizados por la aplicación.
-// TestCasesFile: Ruta del archivo CSV que contiene los casos de prueba.
-// ResultsFile: Ruta del archivo CSV donde se guardan los resultados de las pruebas.
-// ReportFile: Ruta del archivo HTML donde se generará el reporte de las pruebas.
+// Config represents the structure containing the paths used by the application.
+// TestCasesFile: Path to the CSV file containing the test cases.
+// ResultsFile: Path to the CSV file where test results will be stored.
+// ReportFile: Path to the HTML file where the test report will be generated.
 type Config struct {
-	TestCasesFile string // Ruta del archivo CSV de casos de prueba
-	ResultsFile   string // Ruta del archivo CSV de resultados
-	ReportFile    string // Ruta del archivo HTML de reporte
+	TestCasesFile string // Path to the test cases CSV file
+	ResultsFile   string // Path to the results CSV file
+	ReportFile    string // Path to the HTML report file
 }
 
-// AppConfig es una instancia global de la configuración de la aplicación.
+// AppConfig is a global instance of the application configuration.
 var AppConfig Config
 
-// LoadConfig carga la configuración desde las variables de entorno.
-// Esta función carga las rutas de los archivos desde un archivo .env usando la librería godotenv.
-// Si alguna de las variables de entorno no está configurada, el programa termina con un error.
+// LoadConfig loads the configuration from environment variables.
+// This function loads file paths from a .env file using the godotenv library.
+// If any environment variable is not set, the program will terminate with an error.
 func LoadConfig() {
-	// Cargar las variables de entorno desde el archivo .env
+	// Load environment variables from the .env file
 	err := godotenv.Load()
 	if err != nil {
-		log.Fatal("Error cargando el archivo .env")
+		log.Fatal("Error loading .env file")
 	}
 
-	// Obtener la ruta del archivo de casos de prueba desde la variable de entorno TEST_CASES_FILE
+	// Get test cases file path from the TEST_CASES_FILE environment variable
 	testCasesFile := os.Getenv("TEST_CASES_FILE")
 	if testCasesFile == "" {
-		log.Fatal("TEST_CASES_FILE no está configurado. Establezca la variable en el archivo .env.")
+		log.Fatal("TEST_CASES_FILE is not set. Please set this variable in the .env file.")
 	}
 
-	// Obtener la ruta del archivo de resultados desde la variable de entorno RESULTS_FILE
+	// Get results file path from the RESULTS_FILE environment variable
 	resultsFile := os.Getenv("RESULTS_FILE")
 	if resultsFile == "" {
-		log.Fatal("RESULTS_FILE no está configurado. Establezca la variable en el archivo .env.")
+		log.Fatal("RESULTS_FILE is not set. Please set this variable in the .env file.")
 	}
 
-	// Obtener la ruta del archivo de reporte HTML desde la variable de entorno REPORT_FILE
+	// Get HTML report file path from the REPORT_FILE environment variable
 	reportFile := os.Getenv("REPORT_FILE")
 	if reportFile == "" {
-		log.Fatal("REPORT_FILE no está configurado. Establezca la variable en el archivo .env.")
+		log.Fatal("REPORT_FILE is not set. Please set this variable in the .env file.")
 	}
 
-	// Asignar las rutas de los archivos a la estructura AppConfig
+	// Assign file paths to AppConfig struct
 	AppConfig = Config{
 		TestCasesFile: testCasesFile,
 		ResultsFile:   resultsFile,
 		ReportFile:    reportFile,
 	}
 
-	// Confirmar que la configuración se cargó correctamente mostrando las rutas de los archivos.
-	log.Printf("Configuración cargada con éxito. TestCasesFile: %s, ResultsFile: %s, ReportFile: %s", AppConfig.TestCasesFile, AppConfig.ResultsFile, AppConfig.ReportFile)
+	// Confirm that configuration is loaded correctly by showing file paths
+	log.Printf("Configuration loaded successfully. TestCasesFile: %s, ResultsFile: %s, ReportFile: %s", AppConfig.TestCasesFile, AppConfig.ResultsFile, AppConfig.ReportFile)
 }

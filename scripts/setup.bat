@@ -1,125 +1,125 @@
 @echo off
 REM --------------------------------------------------------
-REM setup.bat: Script para preparar el entorno de pruebas API en Windows
+REM setup.bat: Script to prepare the API testing environment on Windows
 REM --------------------------------------------------------
 
-REM Descripción:
-REM   Este script realiza la configuración inicial para ejecutar las pruebas API:
-REM   - Verifica si Go está instalado.
-REM   - Inicializa el módulo Go si no se ha hecho anteriormente.
-REM   - Descarga las dependencias necesarias para el proyecto.
-REM   - Crea un archivo CSV con casos de prueba básicos si no existe.
-REM   - Elimina los archivos de resultados anteriores (data/results.csv y data/report.html) si existen.
-REM   - Crea un archivo .env con las variables de entorno necesarias si no existe.
+REM Description:
+REM   This script performs the initial setup to run API tests:
+REM   - Checks if Go is installed.
+REM   - Initializes the Go module if it has not been done before.
+REM   - Downloads the required project dependencies.
+REM   - Creates a CSV file with basic test cases if it doesn't exist.
+REM   - Deletes previous result files (data/results.csv and data/report.html) if they exist.
+REM   - Creates a .env file with necessary environment variables if it doesn't exist.
 REM
-REM Uso:
-REM   Ejecuta el script desde la terminal con el siguiente comando:
+REM Usage:
+REM   Run the script from the terminal with the following command:
 REM   setup.bat
 REM
-REM Requisitos:
-REM   - Go debe estar instalado en el sistema.
-REM   - Debes tener permisos de escritura en el directorio donde se ejecuta el script.
+REM Requirements:
+REM   - Go must be installed on the system.
+REM   - You must have write permissions in the directory where the script is run.
 
 REM --------------------------------------------------------
 
-REM Imprimir mensaje de inicio
-echo Iniciando la configuración del entorno de pruebas...
+REM Print start message
+echo Starting API testing environment setup...
 
 REM --------------------------------------------------------
-REM 1. Asegurarse de que Go esté instalado
+REM 1. Ensure Go is installed
 REM --------------------------------------------------------
 where go >nul 2>nul
 if %ERRORLEVEL% NEQ 0 (
-    echo Error: Go no esta instalado. Por favor, instala Go.
+    echo Error: Go is not installed. Please install Go.
     exit /b 1
 ) else (
-    echo Go esta instalado: %go_version%
+    echo Go is installed: %go_version%
 )
 
 REM --------------------------------------------------------
-REM 2. Inicializar el modulo Go (si no se ha hecho antes)
+REM 2. Initialize the Go module (if not done before)
 REM --------------------------------------------------------
 if not exist go.mod (
-    echo Inicializando el modulo Go...
+    echo Initializing Go module...
     go mod init go-api-testing
 ) else (
-    echo El modulo Go ya esta inicializado.
+    echo Go module is already initialized.
 )
 
 REM --------------------------------------------------------
-REM 3. Descargar las dependencias necesarias
+REM 3. Download required dependencies
 REM --------------------------------------------------------
-echo Descargando dependencias de Go...
+echo Downloading Go dependencies...
 go mod tidy
 
 REM --------------------------------------------------------
-REM 4. Verificar y crear la carpeta 'data' si no existe
+REM 4. Check and create 'data' folder if it doesn't exist
 REM --------------------------------------------------------
 if not exist "data" (
-    echo La carpeta 'data' no existe. Creando...
+    echo The 'data' folder does not exist. Creating...
     mkdir data
 ) else (
-    echo La carpeta 'data' ya existe.
+    echo The 'data' folder already exists.
 )
 
 REM --------------------------------------------------------
-REM 5. Crear el archivo CSV de casos de prueba (si no existe)
+REM 5. Create the CSV file with test cases (if it doesn't exist)
 REM --------------------------------------------------------
 set TEST_CASES_FILE=data\test_cases.csv
 if not exist "%TEST_CASES_FILE%" (
-    echo El archivo "%TEST_CASES_FILE%" no existe. Creando archivo con algunos casos de prueba básicos...
+    echo The file "%TEST_CASES_FILE%" does not exist. Creating file with some basic test cases...
 
-    REM Crear archivo CSV con ejemplos de pruebas
+    REM Create CSV file with example tests
     echo TestId^,TestCase^,Run^,Method^,URL^,Endpoint^,Authorization^,User^,Password^,Headers^,Body^,ExpectedStatusCode^,ExpectedResponse > %TEST_CASES_FILE%
-    echo TC-001^,Obtener primer usuario OK^,Y^,GET^,https://jsonplaceholder.typicode.com^,/users/1^,,,,,,200^,"{""id"":1,""name"":""Leanne Graham"",""username"":""Bret"",""email"":""Sincere@april.biz"}" >> %TEST_CASES_FILE%
-    echo TC-002^,Obtener primer usuario KO^,Y^,GET^,https://jsonplaceholder.typicode.com^,/users/1^,,,,,,200^,"{}" >> %TEST_CASES_FILE%
-    echo TC-003^,Obtener + StatusCode KO^,Y^,GET^,https://jsonplaceholder.typicode.com^,/users/1^,,,,,,404^,"{}" >> %TEST_CASES_FILE%
+    echo TC-001^,Get first user OK^,Y^,GET^,https://jsonplaceholder.typicode.com^,/users/1^,,,,,,200^,"{""id"":1,""name"":""Leanne Graham"",""username"":""Bret"",""email"":""Sincere@april.biz"}" >> %TEST_CASES_FILE%
+    echo TC-002^,Get first user KO^,Y^,GET^,https://jsonplaceholder.typicode.com^,/users/1^,,,,,,200^,"{}" >> %TEST_CASES_FILE%
+    echo TC-003^,Get + StatusCode KO^,Y^,GET^,https://jsonplaceholder.typicode.com^,/users/1^,,,,,,404^,"{}" >> %TEST_CASES_FILE%
     echo TC-004^,Invalid endpoint^,Y^,GET^,https://jsonplaceholder.typicode.com^,/invalid-endpoint^,,,,,,404^,"{}" >> %TEST_CASES_FILE%
     echo TC-005^,Invalid Status Code^,Y^,GET^,https://jsonplaceholder.typicode.com^,/invalid-endpoint^,,,,,,200^,"{}" >> %TEST_CASES_FILE%
     echo TC-006^,Skipped test^,N^,GET^,https://jsonplaceholder.typicode.com^,/invalid-endpoint^,,,,,,404^,"{}" >> %TEST_CASES_FILE%
     echo TC-007^,Token Auth^,Y^,GET^,https://httpbin.org^,/bearer^,Bearer test^,,,,200^,"{""authenticated"":true,""token"":""test :""}" >> %TEST_CASES_FILE%
-    echo TC-008^,Ejemplo de POST^,Y^,POST^,https://jsonplaceholder.typicode.com^,/users^,,,,,"{""name"":""Juan Pérez"",""email"":""juan@example.com"",""phone"":""123-456-7890""}"^,201^,"{""id"":11}" >> %TEST_CASES_FILE%
-    echo TC-009^,Ejemplo de POST Error^,Y^,POST^,https://jsonplaceholder.typicode.com^,/users^,,,,,"{""name"":""Juan Pérez"",""email"":""juan@example.com"",""phone"":""123-456-7890""}"^,201^,"{}" >> %TEST_CASES_FILE%
+    echo TC-008^,POST Example^,Y^,POST^,https://jsonplaceholder.typicode.com^,/users^,,,,,"{""name"":""Juan Pérez"",""email"":""juan@example.com"",""phone"":""123-456-7890""}"^,201^,"{""id"":11}" >> %TEST_CASES_FILE%
+    echo TC-009^,POST Error Example^,Y^,POST^,https://jsonplaceholder.typicode.com^,/users^,,,,,"{""name"":""Juan Pérez"",""email"":""juan@example.com"",""phone"":""123-456-7890""}"^,201^,"{}" >> %TEST_CASES_FILE%
 
-    echo Archivo "%TEST_CASES_FILE%" creado con ejemplos de pruebas.
+    echo File "%TEST_CASES_FILE%" created with example test cases.
 ) else (
-    echo El archivo "%TEST_CASES_FILE%" ya existe.
+    echo The file "%TEST_CASES_FILE%" already exists.
 )
 
 REM --------------------------------------------------------
-REM 6. Verificar si los archivos de resultados existen, si es así, eliminarlos
+REM 6. Check if previous result files exist and delete them
 REM --------------------------------------------------------
 set RESULTS_FILE=data\results.csv
 if exist "%RESULTS_FILE%" (
-    echo El archivo "%RESULTS_FILE%" ya existe, eliminando archivo anterior...
+    echo The file "%RESULTS_FILE%" already exists. Deleting previous file...
     del "%RESULTS_FILE%"
 )
 
 set REPORT_FILE=data\report.html
 if exist "%REPORT_FILE%" (
-    echo El archivo "%REPORT_FILE%" ya existe, eliminando archivo anterior...
+    echo The file "%REPORT_FILE%" already exists. Deleting previous file...
     del "%REPORT_FILE%"
 )
 
 REM --------------------------------------------------------
-REM 7. Crear archivo .env si no existe
+REM 7. Create .env file if it doesn't exist
 REM --------------------------------------------------------
 set ENV_FILE=.env
 if not exist "%ENV_FILE%" (
-    echo El archivo "%ENV_FILE%" no existe. Creando archivo con las variables de entorno...
+    echo The file "%ENV_FILE%" does not exist. Creating file with required environment variables...
 
-    REM Crear archivo .env con las variables de entorno
+    REM Create .env file with environment variables
     echo TEST_CASES_FILE=data\test_cases.csv >> %ENV_FILE%
     echo RESULTS_FILE=data\results.csv >> %ENV_FILE%
     echo REPORT_FILE=data\report.html >> %ENV_FILE%
 
-    echo Archivo "%ENV_FILE%" creado con las variables de entorno necesarias.
+    echo File "%ENV_FILE%" created with required environment variables.
 ) else (
-    echo El archivo "%ENV_FILE%" ya existe.
+    echo The file "%ENV_FILE%" already exists.
 )
 
 REM --------------------------------------------------------
-REM 8. Mostrar mensaje final
+REM 8. Display final message
 REM --------------------------------------------------------
-echo El entorno está listo. Puedes ejecutar las pruebas ahora con 'go run cmd\main.go'.
+echo The environment is ready. You can now run the tests with 'go run cmd\main.go'.
 pause

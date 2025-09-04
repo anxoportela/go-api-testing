@@ -1,11 +1,10 @@
-// Paquete main contiene la función principal que orquesta la carga de configuración,
-// la ejecución de pruebas, la visualización de resultados y la generación de reportes.
 package main
 
 import (
 	"fmt"
 	"go-api-testing/config"
 	"go-api-testing/internal/csv"
+	"go-api-testing/internal/db"
 	"go-api-testing/internal/report"
 	"go-api-testing/internal/test"
 	"log"
@@ -14,65 +13,62 @@ import (
 	"github.com/olekukonko/tablewriter"
 )
 
-// main es la función principal que ejecuta todo el proceso de pruebas automatizadas.
-// Esto incluye cargar la configuración desde las variables de entorno, leer los casos de prueba,
-// ejecutar las pruebas, mostrar los resultados en la consola y generar un reporte en HTML y un archivo CSV.
 func main() {
-	// Cargar la configuración desde las variables de entorno
+	// Load configuration
 	config.LoadConfig()
 
-	// Leer los casos de prueba desde el archivo CSV especificado en la configuración
-	testCases, err := csv.LeerCSV(config.AppConfig.TestCasesFile)
+	// Initialize SQLite
+	db.InitDB("data/test_history.db")
+
+	// Read test cases from CSV
+	testCases, err := csv.ReadCSV(config.AppConfig.TestCasesFile)
 	if err != nil {
-		log.Fatalf("Error al leer el archivo CSV: %v", err)
+		log.Fatalf("Error reading CSV: %v", err)
 	}
 
-	// Crear una tabla para mostrar los resultados de las pruebas en la consola
+	// Console table
 	table := tablewriter.NewWriter(os.Stdout)
-	table.SetHeader([]string{"TestId", "TestCase", "Resultado", "Mensaje"})
+	table.SetHeader([]string{"TestId", "TestCase", "Result", "Message"})
 
-	// Crear una lista para almacenar los resultados que se escribirán en un archivo CSV
-	var results [][]string
-	results = append(results, []string{"TestId", "TestCase", "Resultado", "Mensaje"})
+	results := [][]string{{"TestId", "TestCase", "Result", "Message"}}
 
-	// Iterar sobre cada caso de prueba y ejecutarlo si tiene la etiqueta 'Y' para ser ejecutado
-	for _, testCase := range testCases {
-		if testCase.Run == "Y" {
-			// Ejecutar la prueba correspondiente utilizando la función EjecutarPrueba
-			success, message := test.EjecutarPrueba(testCase)
-
-			// Determinar el mensaje que se mostrará en consola dependiendo del resultado de la prueba
-			var consoleMessage string
+	// Execute tests
+	for _, tc := range testCases {
+		if tc.Run == "Y" {
+			success, message := test.RunTest(tc)
+			consoleMsg := "Test failed"
 			if success {
-				consoleMessage = "Prueba exitosa"
-			} else {
-				consoleMessage = "Prueba fallida"
+				consoleMsg = "Test successful"
 			}
+			row := []string{tc.TestId, tc.TestCase, fmt.Sprintf("%t", success), consoleMsg}
+			table.Append(row)
+			results = append(results, []string{tc.TestId, tc.TestCase, fmt.Sprintf("%t", success), message})
 
-			// Agregar el resultado de la prueba a la tabla que se mostrará en consola
-			result := []string{testCase.TestId, testCase.TestCase, fmt.Sprintf("%t", success), consoleMessage}
-			table.Append(result)
-
-			// Agregar los resultados al slice de resultados que se escribirá en el archivo CSV
-			results = append(results, []string{testCase.TestId, testCase.TestCase, fmt.Sprintf("%t", success), message})
+			// Save to DB
+			if err := db.SaveResult(tc.TestId, tc.TestCase, success, message); err != nil {
+				log.Printf("Error saving to DB: %v", err)
+			}
 		}
 	}
 
-	// Imprimir la tabla con los resultados de las pruebas en la consola
+	// Show table in console
 	table.Render()
 
-	// Escribir los resultados de las pruebas en un archivo CSV especificado en la configuración
-	err = csv.EscribirResultados(results, config.AppConfig.ResultsFile)
-	if err != nil {
-		log.Fatalf("Error al escribir el archivo de resultados: %v", err)
+	// Save CSV
+	if err := csv.WriteResults(results, config.AppConfig.ResultsFile); err != nil {
+		log.Fatalf("Error writing CSV: %v", err)
 	}
 
-	// Generar un reporte HTML con los resultados de las pruebas
-	err = report.GenerarReporteHTML(results, config.AppConfig.ReportFile)
+	// Get full history
+	historico, err := db.GetHistory()
 	if err != nil {
-		log.Fatalf("Error al generar el reporte HTML: %v", err)
+		log.Fatalf("Error getting DB history: %v", err)
 	}
 
-	// Imprimir mensaje de éxito en la consola una vez que las pruebas se hayan ejecutado correctamente
-	fmt.Println("Las pruebas se ejecutaron correctamente y los resultados se guardaron en 'results.csv'")
+	// Generate HTML report with history
+	if err := report.GenerateUltimateReport(results, historico, config.AppConfig.ReportFile); err != nil {
+		log.Fatalf("Error generating HTML report: %v", err)
+	}
+
+	fmt.Println("Tests executed. CSV and HTML report generated.")
 }

@@ -1,130 +1,129 @@
 #!/bin/bash
 
 # --------------------------------------------------------
-# setup.sh: Script para preparar el entorno de pruebas API
+# setup.sh: Script to prepare the API testing environment
 # --------------------------------------------------------
 
-# Descripción:
-#   Este script realiza la configuración inicial para ejecutar las pruebas API:
-#   - Verifica si Go está instalado.
-#   - Inicializa el módulo Go si no se ha hecho anteriormente.
-#   - Descarga las dependencias necesarias para el proyecto.
-#   - Crea un archivo CSV con casos de prueba básicos si no existe.
-#   - Elimina los archivos de resultados anteriores (data/results.csv y data/report.html) si existen.
-#   - Crea un archivo .env con las variables de entorno necesarias si no existe.
+# Description:
+#   This script performs the initial setup to run API tests:
+#   - Checks if Go is installed.
+#   - Initializes the Go module if it has not been done before.
+#   - Downloads the required project dependencies.
+#   - Creates a CSV file with basic test cases if it doesn't exist.
+#   - Deletes previous result files (data/results.csv and data/report.html) if they exist.
+#   - Creates a .env file with necessary environment variables if it doesn't exist.
 #
-# Uso:
-#   Ejecuta el script desde la terminal con el siguiente comando:
+# Usage:
+#   Run the script from the terminal with the following command:
 #   ./setup.sh
 #
-# Requisitos:
-#   - Go debe estar instalado en el sistema.
-#   - Debes tener permisos de escritura en el directorio donde se ejecuta el script.
+# Requirements:
+#   - Go must be installed on the system.
+#   - You must have write permissions in the directory where the script is run.
 
 # --------------------------------------------------------
 
-# Imprimir mensaje de inicio
-echo "Iniciando la configuración del entorno de pruebas..."
+# Print start message
+echo "Starting API testing environment setup..."
 
 # --------------------------------------------------------
-# 1. Asegurarse de que Go esté instalado
+# 1. Ensure Go is installed
 # --------------------------------------------------------
 if ! command -v go &> /dev/null
 then
-    echo "Error: Go no está instalado. Por favor, instala Go."
+    echo "Error: Go is not installed. Please install Go."
     exit 1
 else
-    echo "Go está instalado: $(go version)"
+    echo "Go is installed: $(go version)"
 fi
 
 # --------------------------------------------------------
-# 2. Inicializar el módulo Go (si no se ha hecho antes)
+# 2. Initialize the Go module (if not done before)
 # --------------------------------------------------------
 if [ ! -f go.mod ]; then
-    echo "Inicializando el módulo Go..."
+    echo "Initializing Go module..."
     go mod init go-api-testing
 else
-    echo "El módulo Go ya está inicializado."
+    echo "Go module is already initialized."
 fi
 
 # --------------------------------------------------------
-# 3. Descargar las dependencias necesarias
+# 3. Download required dependencies
 # --------------------------------------------------------
-echo "Descargando dependencias de Go..."
+echo "Downloading Go dependencies..."
 go mod tidy
 
 # --------------------------------------------------------
-# 4. Verificar y crear la carpeta 'data' si no existe
+# 4. Check and create the 'data' folder if it doesn't exist
 # --------------------------------------------------------
-# Verificamos si la carpeta 'data' existe. Si no, la creamos.
 if [ ! -d "data" ]; then
-    echo "La carpeta 'data' no existe. Creándola..."
+    echo "The 'data' folder does not exist. Creating..."
     mkdir -p data
 else
-    echo "La carpeta 'data' ya existe."
+    echo "The 'data' folder already exists."
 fi
 
 # --------------------------------------------------------
-# 5. Crear el archivo CSV de casos de prueba (si no existe)
+# 5. Create the CSV file with test cases (if it doesn't exist)
 # --------------------------------------------------------
 TEST_CASES_FILE="data/test_cases.csv"
 if [ ! -f "$TEST_CASES_FILE" ]; then
-    echo "El archivo '$TEST_CASES_FILE' no existe. Creando archivo con algunos casos de prueba básicos..."
+    echo "The file '$TEST_CASES_FILE' does not exist. Creating file with some basic test cases..."
 
-    # Crear archivo CSV con ejemplos de pruebas
+    # Create CSV file with example tests
     cat <<EOL > $TEST_CASES_FILE
 TestId,TestCase,Run,Method,URL,Endpoint,Authorization,User,Password,Headers,Body,ExpectedStatusCode,ExpectedResponse
-TC-001,Obtener primer usuario OK,Y,GET,https://jsonplaceholder.typicode.com,/users/1,,,,,,200,"{""id"":1,""name"":""Leanne Graham"",""username"":""Bret"",""email"":""Sincere@april.biz"",""address"":{""street"":""Kulas Light"",""suite"":""Apt. 556"",""city"":""Gwenborough"",""zipcode"":""92998-3874"",""geo"":{""lat"":""-37.3159"",""lng"":""81.1496""}},""phone"":""1-770-736-8031 x56442"",""website"":""hildegard.org"",""company"":{""name"":""Romaguera-Crona"",""catchPhrase"":""Multi-layered client-server neural-net"",""bs"":""harness real-time e-markets""}}"
-TC-002,Obtener primer usuario KO,Y,GET,https://jsonplaceholder.typicode.com,/users/1,,,,,,200,"{}"
-TC-003,Obtener + StatusCode KO,Y,GET,https://jsonplaceholder.typicode.com,/users/1,,,,,,404,"{}"
+TC-001,Get first user OK,Y,GET,https://jsonplaceholder.typicode.com,/users/1,,,,,,200,"{""id"":1,""name"":""Leanne Graham"",""username"":""Bret"",""email"":""Sincere@april.biz"",""address"":{""street"":""Kulas Light"",""suite"":""Apt. 556"",""city"":""Gwenborough"",""zipcode"":""92998-3874"",""geo"":{""lat"":""-37.3159"",""lng"":""81.1496""}},""phone"":""1-770-736-8031 x56442"",""website"":""hildegard.org"",""company"":{""name"":""Romaguera-Crona"",""catchPhrase"":""Multi-layered client-server neural-net"",""bs"":""harness real-time e-markets""}}"
+TC-002,Get first user KO,Y,GET,https://jsonplaceholder.typicode.com,/users/1,,,,,,200,"{}"
+TC-003,Get + StatusCode KO,Y,GET,https://jsonplaceholder.typicode.com,/users/1,,,,,,404,"{}"
 TC-004,Invalid endpoint,Y,GET,https://jsonplaceholder.typicode.com,/invalid-endpoint,,,,,,404,"{}"
 TC-005,Invalid Status Code,Y,GET,https://jsonplaceholder.typicode.com,/invalid-endpoint,,,,,,200,"{}"
 TC-006,Skipped test,N,GET,https://jsonplaceholder.typicode.com,/invalid-endpoint,,,,,,404,"{}"
 TC-007,Token Auth,Y,GET,https://httpbin.org,/bearer,Bearer test,,,,,200,"{""authenticated"":true,""token"":""test :""}"
-TC-008,Ejemplo de POST,Y,POST,https://jsonplaceholder.typicode.com,/users,,,,,"{""name"":""Juan Pérez"",""email"":""juan@example.com"",""phone"":""123-456-7890""}",201,"{""id"":11}"
-TC-009,Ejemplo de POST Error,Y,POST,https://jsonplaceholder.typicode.com,/users,,,,,"{""name"":""Juan Pérez"",""email"":""juan@example.com"",""phone"":""123-456-7890""}",201,"{}"
+TC-008,POST Example,Y,POST,https://jsonplaceholder.typicode.com,/users,,,,,"{""name"":""Juan Pérez"",""email"":""juan@example.com"",""phone"":""123-456-7890""}",201,"{""id"":11}"
+TC-009,POST Error Example,Y,POST,https://jsonplaceholder.typicode.com,/users,,,,,"{""name"":""Juan Pérez"",""email"":""juan@example.com"",""phone"":""123-456-7890""}",201,"{}"
 EOL
 
-    echo "Archivo '$TEST_CASES_FILE' creado con ejemplos de pruebas."
+    echo "File '$TEST_CASES_FILE' created with example test cases."
 else
-    echo "El archivo '$TEST_CASES_FILE' ya existe."
+    echo "The file '$TEST_CASES_FILE' already exists."
 fi
 
 # --------------------------------------------------------
-# 6. Verificar si los archivos de resultados existen, si es así, eliminarlos
+# 6. Check if previous result files exist, delete if they do
 # --------------------------------------------------------
 RESULTS_FILE="data/results.csv"
 if [ -f "$RESULTS_FILE" ]; then
-    echo "El archivo '$RESULTS_FILE' ya existe, eliminando archivo anterior..."
+    echo "The file '$RESULTS_FILE' already exists. Deleting previous file..."
     rm "$RESULTS_FILE"
 fi
 
 REPORT_FILE="data/report.html"
 if [ -f "$REPORT_FILE" ]; then
-    echo "El archivo '$REPORT_FILE' ya existe, eliminando archivo anterior..."
+    echo "The file '$REPORT_FILE' already exists. Deleting previous file..."
     rm "$REPORT_FILE"
 fi
 
 # --------------------------------------------------------
-# 7. Crear archivo .env si no existe
+# 7. Create .env file if it doesn't exist
 # --------------------------------------------------------
 ENV_FILE=".env"
 if [ ! -f "$ENV_FILE" ]; then
-    echo "El archivo '$ENV_FILE' no existe. Creando archivo con las variables de entorno..."
+    echo "The file '$ENV_FILE' does not exist. Creating file with required environment variables..."
 
-    # Crear archivo .env con las variables de entorno
+    # Create .env file with environment variables
     cat <<EOL > $ENV_FILE
 TEST_CASES_FILE=data/test_cases.csv
 RESULTS_FILE=data/results.csv
 REPORT_FILE=data/report.html
 EOL
 
-    echo "Archivo '$ENV_FILE' creado con las variables de entorno necesarias."
+    echo "File '$ENV_FILE' created with required environment variables."
 else
-    echo "El archivo '$ENV_FILE' ya existe."
+    echo "The file '$ENV_FILE' already exists."
 fi
 
 # --------------------------------------------------------
-# 8. Mostrar mensaje final
+# 8. Display final message
 # --------------------------------------------------------
-echo "El entorno está listo. Puedes ejecutar las pruebas ahora con 'go run cmd/main.go'."
+echo "Environment is ready. You can now run the tests with 'go run cmd/main.go'."

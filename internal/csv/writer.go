@@ -1,4 +1,4 @@
-// Paquete csv contiene funciones para manejar archivos CSV, incluyendo la lectura y escritura de datos.
+// Package csv contains functions for handling CSV files, including reading and writing data.
 package csv
 
 import (
@@ -7,40 +7,39 @@ import (
 	"os"
 )
 
-// EscribirResultados escribe los resultados proporcionados en un archivo CSV sin realizar
-// el escapado de comillas ni otros caracteres especiales. La función crea un archivo CSV nuevo
-// o sobrescribe uno existente con los datos proporcionados.
+// WriteResults writes the provided results to a CSV file without escaping quotes or other special characters.
+// The function creates a new CSV file or overwrites an existing one with the provided data.
 //
 // Parameters:
-//   - results ([][]string): Un slice de slices de strings, donde cada slice interno representa
-//     una fila que se escribirá en el archivo CSV.
-//   - filename (string): El nombre del archivo CSV en el que se guardarán los resultados.
+//   - results ([][]string): A slice of slices of strings, where each inner slice represents
+//     a row to be written to the CSV file.
+//   - filename (string): The name of the CSV file where the results will be saved.
 //
 // Returns:
-//   - error: Un error en caso de que ocurra algún problema al crear o escribir en el archivo CSV.
-func EscribirResultados(results [][]string, filename string) error {
-	// Abrir o crear el archivo CSV para escritura
+//   - error: An error in case there is a problem creating or writing to the CSV file.
+func WriteResults(results [][]string, filename string) error {
+	// Open or create the CSV file for writing
 	file, err := os.Create(filename)
 	if err != nil {
-		return fmt.Errorf("error al crear el archivo CSV: %v", err)
+		return fmt.Errorf("error creating CSV file: %v", err)
 	}
 	defer file.Close()
 
-	// Crear un escritor CSV que manejará la escritura de las filas
+	// Create a CSV writer that will handle writing the rows
 	writer := csv.NewWriter(file)
 	defer writer.Flush()
 
-	// Escribir cada fila de resultados en el archivo CSV
+	// Write each row of results to the CSV file
 	for _, record := range results {
-		// Escribir la fila como una línea CSV
-		// NOTA: Aquí no se realiza un escapado automático de comillas u otros caracteres especiales,
-		//       lo que significa que los datos deben estar correctamente formateados antes de ser escritos.
+		// Write the row as a CSV line
+		// NOTE: No automatic escaping of quotes or other special characters is performed,
+		//       meaning the data must be properly formatted before writing.
 		err := writer.Write(record)
 		if err != nil {
-			return fmt.Errorf("error al escribir en el archivo CSV: %v", err)
+			return fmt.Errorf("error writing to CSV file: %v", err)
 		}
 	}
 
-	// Retornar nil si todo salió bien
+	// Return nil if everything went well
 	return nil
 }

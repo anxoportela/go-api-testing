@@ -1,5 +1,5 @@
-// Paquete test contiene funciones relacionadas con la ejecución de pruebas y comparación de respuestas
-// de una API frente a las respuestas esperadas definidas en los casos de prueba.
+// Package test contains functions related to executing tests and comparing API responses
+// against the expected responses defined in test cases.
 package test
 
 import (
@@ -10,62 +10,75 @@ import (
 	"reflect"
 )
 
-// EjecutarPrueba ejecuta una prueba basada en un caso de prueba especificado. La función realiza una solicitud HTTP
-// utilizando los datos del caso de prueba, luego compara la respuesta obtenida con la respuesta esperada.
-// Si el código de estado y el cuerpo de la respuesta coinciden con lo esperado, la prueba se considera exitosa.
+// RunTest executes a test based on a specified test case.
+// The function performs an HTTP request using the test case data,
+// then compares the obtained response with the expected one.
+// If both the status code and response body match the expectations, the test passes.
 //
 // Parameters:
-//   - test (models.TestCase): Un caso de prueba que contiene los detalles sobre el método HTTP,
-//     la URL, las cabeceras, el cuerpo, la autenticación, y las respuestas esperadas.
+//   - test (models.TestCase): Test case containing method, URL, headers, body, auth, and expected responses.
 //
 // Returns:
-//   - bool: Retorna `true` si la prueba fue exitosa, `false` en caso contrario.
-//   - string: Un mensaje detallado sobre el resultado de la prueba, ya sea de éxito o el error encontrado.
-func EjecutarPrueba(test models.TestCase) (bool, string) {
-	// Construir la URL completa concatenando la base de la URL con el endpoint especificado
+//   - bool: true if the test was successful, false otherwise.
+//   - string: Detailed message about the test result.
+func RunTest(test models.TestCase) (bool, string) {
 	fullURL := test.URL + test.Endpoint
 
-	// Realizar la solicitud HTTP utilizando los parámetros proporcionados en el caso de prueba
-	statusCode, response, err := api.RealizarSolicitud(test.Method, fullURL, test.Body, test.Headers, test.Authorization, test.User, test.Password)
+	// Perform HTTP request
+	statusCode, response, err := api.RealizarSolicitud(
+		test.Method,
+		fullURL,
+		test.Body,
+		test.Headers,
+		test.Authorization,
+		test.User,
+		test.Password,
+	)
+
 	if err != nil {
-		// Si ocurre un error en la solicitud, retornamos un mensaje con el error
-		return false, fmt.Sprintf("Error en la solicitud: %v", err)
+		// Request or authentication error
+		msg := fmt.Sprintf("Error in request: %v", err)
+		return false, msg
 	}
 
-	// Comprobar si el código de estado de la respuesta coincide con el esperado
+	// Check status code
 	if statusCode != test.ExpectedStatusCode {
-		return false, fmt.Sprintf("Código de estado esperado: %d, obtenido: %d", test.ExpectedStatusCode, statusCode)
+		msg := fmt.Sprintf(
+			"Incorrect status code: expected %d, got %d",
+			test.ExpectedStatusCode,
+			statusCode,
+		)
+		return false, msg
 	}
 
-	// Si hay una respuesta esperada, comparamos la respuesta obtenida con la esperada
+	// Check expected response only if it's not empty
 	if test.ExpectedResponse != "" {
 		var expected, actual map[string]interface{}
 
-		// Deserializar la respuesta esperada en una estructura de tipo mapa
+		// Deserialize expected response
 		if err := json.Unmarshal([]byte(test.ExpectedResponse), &expected); err != nil {
-			return false, fmt.Sprintf("Error al deserializar la respuesta esperada: %v", err)
+			msg := fmt.Sprintf("Error deserializing expected response: %v", err)
+			return false, msg
 		}
 
-		// Deserializar la respuesta obtenida de la API en una estructura de tipo mapa
+		// Deserialize obtained response
 		if err := json.Unmarshal([]byte(response), &actual); err != nil {
-			return false, fmt.Sprintf("Error al deserializar la respuesta obtenida: %v", err)
+			msg := fmt.Sprintf("Error deserializing obtained response: %v", err)
+			return false, msg
 		}
 
-		// Comparar las dos estructuras deserializadas para ver si son iguales
+		// Compare JSON structures
 		if !reflect.DeepEqual(expected, actual) {
-			// Si las respuestas no coinciden, las serializamos nuevamente como JSON para mostrar la diferencia
-			expectedJSON, _ := json.Marshal(expected)
-			actualJSON, _ := json.Marshal(actual)
-
-			// Convertir las respuestas serializadas en cadenas JSON
-			expectedJSONStr := string(expectedJSON)
-			actualJSONStr := string(actualJSON)
-
-			// Retornar el mensaje de error con las respuestas esperada y obtenida
-			return false, fmt.Sprintf("Las respuestas no coinciden: Esperada: %s Obtenida: %s", expectedJSONStr, actualJSONStr)
+			expectedJSON, _ := json.MarshalIndent(expected, "", "  ")
+			actualJSON, _ := json.MarshalIndent(actual, "", "  ")
+			msg := fmt.Sprintf(
+				"Response does not match:\nExpected: %s\nObtained: %s",
+				expectedJSON, actualJSON,
+			)
+			return false, msg
 		}
 	}
 
-	// Si el código de estado y la respuesta son correctos, la prueba es exitosa
-	return true, "Prueba exitosa"
+	// Everything is correct
+	return true, "Test passed successfully"
 }
